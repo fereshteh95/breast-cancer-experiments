@@ -43,6 +43,7 @@ class PatchModelBuilder(ModelBuilderBase):
         self.dropout_rate = dropout_rate
         self.lr = lr
         self.phase = phase
+        self.three_phase_training = self.config.general_info.three_phase_training
         self. history_output_path = '../' + self.config.info_training.history_output_path
         self.output_weights_name = '../' + self.config.info_training.output_weights_name
 
@@ -90,7 +91,12 @@ class PatchModelBuilder(ModelBuilderBase):
                                  save_weights_only=True,
                                  mode='max')
 
-        lr_reduction = ReduceLROnPlateau(monitor='val_accuracy', factor=0.9, patience=1, verbose=1, mode="max",
-                                         min_lr=1e-8)
-        history_logger = CSVLogger(self. history_output_path, separator=",", append=True)
-        return [check1, lr_reduction, history_logger]
+        history_logger = CSVLogger(self.history_output_path, separator=",", append=True)
+
+        if self.three_phase_training:
+            return [check1, history_logger]
+        else:
+            lr_reduction = ReduceLROnPlateau(monitor='val_accuracy', factor=0.9, patience=1, verbose=1, mode="max",
+                                             min_lr=1e-8)
+
+            return [check1, lr_reduction, history_logger]

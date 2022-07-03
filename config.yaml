@@ -17,6 +17,7 @@ general_info:
   test_batch_size : 5
   patch_model_weight: ''
   patch_training: True
+  three_phase_training: True
 
 info_training:
   history_output_path : 'history.csv'
