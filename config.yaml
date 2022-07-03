@@ -1,0 +1,60 @@
+general_info:
+  multi_view: False
+  classes : ['Benign', 'Malignant']
+  random_seed : 2
+  image_source_dir_train : 'path_to_train_dir'
+  image_source_dir_val : 'path_to_validation_dir'
+  image_source_dir_test : 'path_to_test_dir'
+  best_weights_path : 'path_to_best_weights'
+  activation : 'softmax'
+  image_height_whole : 1024
+  image_width_whole: 728
+  image_height_patch: 256
+  image_width_patch: 256
+  image_channels: 3
+  train_batch_size : 5
+  val_batch_size : 5
+  test_batch_size : 5
+  patch_model_weight: ''
+  patch_training: True
+
+info_training:
+  history_output_path : 'history.csv'
+  use_best_weights : False
+  output_weights_name : 'output_model.h5'
+  epochs : 4
+  initial_learning_rate: 2.5e-6
+  loss : 'categorical_crossentropy'
+
+data_sequence:
+  train_csv_file : 'path_to_train_dir/train.csv'
+  validation_csv_file : 'path_to_validation_dir/validation.csv'
+  test_csv_file : 'path_to_test_dir/test_new.csv'
+  x_names : 'imgfile'
+  cc_names: ''
+  mlo_names: ''
+  target_size_h : 256
+  target_size_w : 256
+  augment : False
+  verbose : False
+  steps : None
+  shuffle_on_epoch_end : False
+  augmenter: False
+  synthesize: False
+
+augmentation:
+  rotation_range: 10
+  rotation_proba: 0.3
+  flip_proba: 0.5
+
+evaluation:
+  confusion_matrix : True
+  classification_report : True
+  performance_metrics : True
+  precision_recall_curves : True
+  auc_curves : True
+  wrong_prediction : "positive"
+  explainability : True
+
+model_class: model.DenseNet
+
