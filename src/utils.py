@@ -6,7 +6,7 @@ from mlflow.entities import ViewType
 from git import Repo
 
 
-MLFLOW_TRACKING_URI = "http://130.185.75.127:8080"
+MLFLOW_TRACKING_URI = "http://185.110.190.127:7080/"
 
 
 def setup_mlflow_active_run(config_path: Path,
