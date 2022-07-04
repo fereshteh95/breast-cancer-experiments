@@ -1,10 +1,10 @@
 general_info:
   multi_view: False
-  classes : ['Benign', 'Malignant']
+  classes : ['background', 'Benign calcification', 'Malignant calcification', 'Benign mass', 'Malignant mass']
   random_seed : 2
-  image_source_dir_train : 'path_to_train_dir'
-  image_source_dir_val : 'path_to_validation_dir'
-  image_source_dir_test : 'path_to_test_dir'
+  image_source_dir_train : './data/'
+  image_source_dir_val : './data/'
+  image_source_dir_test : './data/'
   best_weights_path : 'path_to_best_weights'
   activation : 'softmax'
   image_height_whole : 1024
@@ -28,14 +28,19 @@ info_training:
   loss : 'categorical_crossentropy'
 
 data_sequence:
-  train_csv_file : 'path_to_train_dir/train.csv'
-  validation_csv_file : 'path_to_validation_dir/validation.csv'
-  test_csv_file : 'path_to_test_dir/test_new.csv'
+  train_csv_file : '../data/train.csv'
+  validation_csv_file : '../data/validation.csv'
+  test_csv_file : '../data/validation.csv'
   x_names : 'imgfile'
   cc_names: ''
   mlo_names: ''
   target_size_h : 256
   target_size_w : 256
+  image_height_whole: 1024
+  image_width_whole: 728
+  image_height_patch: 256
+  image_width_patch: 256
+  image_channels: 3
   augment : False
   verbose : False
   steps : None

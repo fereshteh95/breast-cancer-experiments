@@ -5,7 +5,7 @@ import typing
 import mlflow
 from omegaconf.dictconfig import DictConfig
 
-from ..model_factory import ModelBuilderBase
+from model_factory import ModelBuilderBase
 
 
 class TrainerBase(ABC):

@@ -3,7 +3,7 @@
     inference_engine, contains the shared-preprocessing + preprocessing + inference + post-processing
 
 """
-from ..prepare import Preparation
+from prepare import Preparation
 from .base import ModelBuilderBase
 
 import tensorflow as tf
