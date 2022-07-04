@@ -2,9 +2,9 @@ general_info:
   multi_view: False
   classes : ['background', 'Benign calcification', 'Malignant calcification', 'Benign mass', 'Malignant mass']
   random_seed : 2
-  image_source_dir_train : './data/'
-  image_source_dir_val : './data/'
-  image_source_dir_test : './data/'
+  image_source_dir_train : '../data/'
+  image_source_dir_val : '../data/'
+  image_source_dir_test : '../data/'
   best_weights_path : 'path_to_best_weights'
   activation : 'softmax'
   image_height_whole : 1024
@@ -12,9 +12,9 @@ general_info:
   image_height_patch: 256
   image_width_patch: 256
   image_channels: 3
-  train_batch_size : 5
-  val_batch_size : 5
-  test_batch_size : 5
+  train_batch_size : 32
+  val_batch_size : 32
+  test_batch_size : 32
   patch_model_weight: ''
   patch_training: True
   three_phase_training: True

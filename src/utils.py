@@ -13,9 +13,13 @@ def setup_mlflow_active_run(config_path: Path,
                             is_evaluation: bool):
     """setup the MLFlow"""
 
-    repo = Repo('../')
-    root = Path(repo.working_tree_dir).name
-    experiment_name = root + '/' + repo.active_branch.name
+    try:
+        repo = Repo('../')
+        root = Path(repo.working_tree_dir).name
+        experiment_name = root + '/' + repo.active_branch.name
+    except:
+        print('Not a Git Repository')
+        experiment_name = 'brast-cancer-experiments/patch-classifier'
 
     mlflow.end_run()
     active_run = _setup_mlflow(mlflow_experiment_name=experiment_name)
@@ -64,7 +68,8 @@ def _setup_mlflow(mlflow_experiment_name: str,
     experiments = client.list_experiments(view_type=ViewType.ALL)
     if mlflow_experiment_name not in [i.name for i in experiments]:
         print(f'creating a new experiment: {mlflow_experiment_name}')
-        experiment = client.create_experiment(name=mlflow_experiment_name)
+        experiment_id = client.create_experiment(name=mlflow_experiment_name)
+        experiment = client.get_experiment(experiment_id)
     else:
         experiment = [i for i in experiments if i.name == mlflow_experiment_name][0]
         if experiment.lifecycle_stage != 'active':
