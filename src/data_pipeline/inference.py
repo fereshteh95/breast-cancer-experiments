@@ -3,7 +3,7 @@ import pandas as pd
 
 from .data import ImageSequenceMultiView, ImageSequenceSingleView
 from .augmentation import Augmentation
-from ..prepare import Preparation
+from prepare import Preparation
 from .base import DataLoaderBase
 
 

@@ -64,7 +64,8 @@ def _setup_mlflow(mlflow_experiment_name: str,
     experiments = client.list_experiments(view_type=ViewType.ALL)
     if mlflow_experiment_name not in [i.name for i in experiments]:
         print(f'creating a new experiment: {mlflow_experiment_name}')
-        experiment = client.create_experiment(name=mlflow_experiment_name)
+        experiment_id = client.create_experiment(name=mlflow_experiment_name)
+        experiment = client.get_experiment(experiment_id)
     else:
         experiment = [i for i in experiments if i.name == mlflow_experiment_name][0]
         if experiment.lifecycle_stage != 'active':

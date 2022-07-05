@@ -7,7 +7,7 @@ from tensorflow.keras.regularizers import l1, l2, l1_l2
 from tensorflow.keras import backend as K
 
 from .patch_resnet_model import PatchModelBuilder
-from ..prepare import Preparation
+from prepare import Preparation
 from .base import ModelBuilderBase
 
 if K.image_data_format() == 'channels_last':

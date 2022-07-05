@@ -9,9 +9,9 @@
 from pathlib import Path
 from omegaconf import OmegaConf
 
-from .model_factory import PatchModelBuilder, WholeModelBuilder
-from .data_pipeline import DataLoader
-from .utils import setup_mlflow_active_run
+from model_factory import PatchModelBuilder, WholeModelBuilder
+from data_pipeline import DataLoader
+from utils import setup_mlflow_active_run
 
 
 from training import Trainer

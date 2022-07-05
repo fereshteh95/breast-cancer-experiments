@@ -33,8 +33,11 @@ data_sequence:
   x_names : 'imgfile'
   cc_names: ''
   mlo_names: ''
-  target_size_h : 256
-  target_size_w : 256
+  image_height_whole: 1024
+  image_width_whole: 728
+  image_height_patch: 256
+  image_width_patch: 256
+  image_channels: 3
   augment : False
   verbose : False
   steps : None
