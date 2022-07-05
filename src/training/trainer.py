@@ -32,6 +32,7 @@ class Trainer(TrainerBase):
         Training the model.
         """
         with mlflow.start_run(nested=True):
+            mlflow.tensorflow.autolog()
 
             if self.three_phase_training:
 

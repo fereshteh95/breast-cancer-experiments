@@ -26,6 +26,8 @@ def main():
 
     model_builder = PatchModelBuilder(config, phase='train')
     compiled_model = model_builder.get_model()
+    if config.info_training.use_best_weights:
+        compiled_model.load_weights(config.general_info.best_weights_path)
     callbacks = model_builder.get_callbacks()
 
     data_loader = DataLoader(config)

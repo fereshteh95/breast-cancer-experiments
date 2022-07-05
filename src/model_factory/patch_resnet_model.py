@@ -44,8 +44,8 @@ class PatchModelBuilder(ModelBuilderBase):
         self.lr = lr
         self.phase = phase
         self.three_phase_training = self.config.general_info.three_phase_training
-        self. history_output_path = '../' + self.config.info_training.history_output_path
-        self.output_weights_name = '../' + self.config.info_training.output_weights_name
+        self. history_output_path = self.config.info_training.history_output_path
+        self.output_weights_name = self.config.info_training.output_weights_name
 
     def get_model(self, hp=None) -> tf.keras.Model:
         """Generates the model for training, and returns the compiled model.
