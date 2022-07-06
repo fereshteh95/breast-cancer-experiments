@@ -2,9 +2,9 @@ general_info:
   multi_view: False
   classes : ['background', 'Benign calcification', 'Malignant calcification', 'Benign mass', 'Malignant mass']
   random_seed : 2
-  image_source_dir_train : '../data/'
-  image_source_dir_val : '../data/'
-  image_source_dir_test : '../data/'
+  image_source_dir_train : ''
+  image_source_dir_val : ''
+  image_source_dir_test : ''
   best_weights_path : '/content/drive/MyDrive/BR-Runs/output_model.h5'
   activation : 'softmax'
   image_height_whole : 1024
@@ -12,17 +12,17 @@ general_info:
   image_height_patch: 256
   image_width_patch: 256
   image_channels: 3
-  train_batch_size : 32
-  val_batch_size : 32
-  test_batch_size : 32
+  train_batch_size : 64
+  val_batch_size : 64
+  test_batch_size : 64
   patch_model_weight: ''
   patch_training: True
-  three_phase_training: False
+  three_phase_training: True
 
 info_training:
-  history_output_path : '/content/drive/MyDrive/BR-Runs/Run2/history.csv'
-  use_best_weights : True
-  output_weights_name : '/content/drive/MyDrive/BR-Runs/Run2/output_model.h5'
+  history_output_path : '/content/drive/MyDrive/BR-Runs/Run3/history.csv'
+  use_best_weights : False
+  output_weights_name : '/content/drive/MyDrive/BR-Runs/Run3/output_model.h5'
   epochs : 15
   initial_learning_rate: 1e-4
   loss : 'categorical_crossentropy'

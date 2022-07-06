@@ -253,13 +253,16 @@ class ImageSequenceSingleView(Sequence):
 
         clahe = cv2.createCLAHE(clipLimit=2, tileGridSize=(5, 5))
         cl1 = clahe.apply(np.array(img, dtype=np.uint8))
-        cl1 = (cl1 - cl1.min()) / (cl1.max() - cl1.min())
+        cl1 = cl1 / 255.0
+        # cl1 = (cl1 - cl1.min()) / (cl1.max() - cl1.min())
 
         clahe = cv2.createCLAHE(clipLimit=3)
         cl2 = clahe.apply(np.array(img, dtype=np.uint8))
-        cl2 = (cl2 - cl2.min()) / (cl2.max() - cl2.min())
+        cl2 = cl2 / 255.0
+        # cl2 = (cl2 - cl2.min()) / (cl2.max() - cl2.min())
 
-        img = (img - img.min()) / (img.max() - img.min())
+        # img = (img - img.min()) / (img.max() - img.min())
+        img = img / 255.0
         synthesized = cv2.merge((img, cl1, cl2))
         return synthesized
 
@@ -283,7 +286,8 @@ class ImageSequenceSingleView(Sequence):
         else:
             clahe = cv2.createCLAHE(clipLimit=2, tileGridSize=(5, 5))
             image = clahe.apply(np.array(image, dtype=np.uint8))
-            image = (image - image.min()) / (image.max() - image.min())
+            image = image / 255.0
+            # image = (image - image.min()) / (image.max() - image.min())
             image = np.expand_dims(image, axis=-1)
             image_array = np.concatenate([image, image, image], axis=-1)
         return image_array
