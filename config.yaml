@@ -5,7 +5,7 @@ general_info:
   image_source_dir_train : ''
   image_source_dir_val : ''
   image_source_dir_test : ''
-  best_weights_path : '/content/drive/MyDrive/BR-Runs/output_model.h5'
+  best_weights_path : ''
   activation : 'softmax'
   image_height_whole : 1024
   image_width_whole: 728
@@ -20,10 +20,10 @@ general_info:
   three_phase_training: True
 
 info_training:
-  history_output_path : '/content/drive/MyDrive/BR-Runs/Run3/history.csv'
+  history_output_path : '/content/drive/MyDrive/BR-Runs/Run5/history.csv'
   use_best_weights : False
-  output_weights_name : '/content/drive/MyDrive/BR-Runs/Run3/output_model.h5'
-  epochs : 15
+  output_weights_name : '/content/drive/MyDrive/BR-Runs/Run5/output_model.h5'
+  epochs : 10
   initial_learning_rate: 1e-4
   loss : 'categorical_crossentropy'
 
@@ -46,7 +46,7 @@ data_sequence:
   steps : None
   shuffle_on_epoch_end : True
   augmenter: False
-  synthesize: False
+  synthesize: True
 
 augmentation:
   rotation_range: 10

@@ -96,7 +96,7 @@ class PatchModelBuilder(ModelBuilderBase):
         if self.three_phase_training:
             return [check1, history_logger]
         else:
-            lr_reduction = ReduceLROnPlateau(monitor='val_accuracy', factor=0.9, patience=1, verbose=1, mode="max",
+            lr_reduction = ReduceLROnPlateau(monitor='val_accuracy', factor=0.75, patience=3, verbose=1, mode="max",
                                              min_lr=1e-8)
 
             return [check1, lr_reduction, history_logger]
