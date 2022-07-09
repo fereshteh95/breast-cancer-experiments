@@ -13,7 +13,6 @@ class Trainer(TrainerBase):
         super().__init__(config, run_dir, exported_dir)
         self.initial_learning_rate = self.config.info_training.initial_learning_rate
         self.activation = self.config.general_info.activation
-        # self.image_dimension = self.config.general_info.image_dimension
         self.loss = self.config.info_training.loss
         self.epochs = self.config.info_training.epochs
         self.three_phase_training = self.config.general_info.three_phase_training
