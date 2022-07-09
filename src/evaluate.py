@@ -6,3 +6,31 @@
     these metrics are used to create the model-card corresponding to each training-job
 
 """
+from pathlib import Path
+from omegaconf import OmegaConf
+
+from model_factory import PatchModelBuilder
+from data_pipeline import DataLoader
+from utils import setup_mlflow_active_run
+
+from evaluation import Evaluator
+
+
+def main():
+    config_file_path = Path('../config.yaml')
+    config = OmegaConf.load(config_file_path)
+    evaluator = Evaluator(config)
+
+    model_builder = PatchModelBuilder(config, phase='evaluation')
+    compiled_model = model_builder.get_model()
+    data_loader = DataLoader(config)
+    test_data_gen, _ = data_loader.create_test_generator()
+    setup_mlflow_active_run(config_path=config_file_path, is_evaluation=True)
+
+    evaluator.evaluate(model=compiled_model,
+                       test_data_gen=test_data_gen
+                       )
+
+
+if __name__ == '__main__':
+    main()

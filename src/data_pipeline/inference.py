@@ -237,7 +237,7 @@ class DataLoader(DataLoaderBase):
                                                    img_w,
                                                    self.synthesize,
                                                    augmentation,
-                                                   self.verbose,
+                                                   True,
                                                    test_steps,
                                                    False,
                                                    self.random_seed
@@ -252,7 +252,7 @@ class DataLoader(DataLoaderBase):
                                                     img_w,
                                                     self.synthesize,
                                                     augmentation,
-                                                    self.verbose,
+                                                    True,
                                                     test_steps,
                                                     False,
                                                     self.random_seed
