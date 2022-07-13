@@ -5,7 +5,6 @@ import mlflow
 from mlflow.entities import ViewType
 from git import Repo
 
-
 MLFLOW_TRACKING_URI = "http://185.110.190.127:7080/"
 
 
@@ -88,10 +87,10 @@ def _setup_mlflow(mlflow_experiment_name: str,
     #     experiment_id = mlflow.create_experiment(mlflow_experiment_name)
 
     mlflow.set_tracking_uri(mlflow_tracking_uri)
-    active_run = mlflow.start_run(experiment_id=experiment.experiment_id)
+    # active_run = mlflow.start_run(experiment_id=experiment.experiment_id)
     # active_run = mlflow.start_run(experiment_id=experiment.experiment_id)
 
-    return active_run
+    return mlflow.start_run(experiment_id=experiment.experiment_id)
 
 
 def _add_config_file_to_mlflow(config_dict: dict):

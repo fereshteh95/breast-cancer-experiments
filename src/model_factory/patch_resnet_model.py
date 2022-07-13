@@ -32,8 +32,8 @@ class PatchModelBuilder(ModelBuilderBase):
         super().__init__(config)
         self.backbone = ResNet50
         self.class_names = self.config.general_info.classes
-        self.input_shape = (self.config.general_info.image_height_patch,
-                            self.config.general_info.image_width_patch,
+        self.input_shape = (self.config.general_info.image_height,
+                            self.config.general_info.image_width,
                             self.config.general_info.image_channels
                             )
         self.classes = len(self.class_names)
@@ -44,8 +44,6 @@ class PatchModelBuilder(ModelBuilderBase):
         self.lr = lr
         self.phase = phase
         self.three_phase_training = self.config.general_info.three_phase_training
-        # self.history_output_path = self.config.info_training.history_output_path
-        # self.output_weights_name = self.config.info_training.output_weights_name
 
     def get_model(self, hp=None) -> tf.keras.Model:
         """Generates the model for training, and returns the compiled model.
@@ -73,7 +71,7 @@ class PatchModelBuilder(ModelBuilderBase):
             optimizer = Adam(learning_rate=self.lr)
             m.compile(optimizer=optimizer, loss=self.loss, metrics=metrics_all)
         elif self.phase == 'evaluation':
-            m.load_weights(self.config.general_info.best_weights_path)
+            m = m
         return m
 
     def get_callbacks(self) -> list:
@@ -85,12 +83,14 @@ class PatchModelBuilder(ModelBuilderBase):
 
         """
 
-        # history_logger = CSVLogger(self.history_output_path, separator=",", append=True)
-
         if self.three_phase_training:
             return []
         else:
-            lr_reduction = ReduceLROnPlateau(monitor='val_accuracy', factor=0.8, patience=1, verbose=1, mode="max",
+            lr_reduction = ReduceLROnPlateau(monitor=self.config.info_training.export_metric,
+                                             factor=0.8,
+                                             patience=1,
+                                             verbose=1,
+                                             mode=self.config.info_training.export_mode,
                                              min_lr=1e-8)
 
             return [lr_reduction]

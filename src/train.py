@@ -26,15 +26,13 @@ def main():
 
     model_builder = PatchModelBuilder(config, phase='train')
     compiled_model = model_builder.get_model()
-    # if config.info_training.use_best_weights:
-    #     compiled_model.load_weights(config.general_info.best_weights_path)
     callbacks = model_builder.get_callbacks()
 
     data_loader = DataLoader(config)
     train_data_gen, n_iter_train = data_loader.create_training_generator()
     val_data_gen, n_iter_val = data_loader.create_validation_generator()
     class_weight = data_loader.get_class_weight()
-    setup_mlflow_active_run(config_path=config_file_path, is_evaluation=False)
+    active_run = setup_mlflow_active_run(config_path=config_file_path, is_evaluation=False)
 
     trainer.train(model=compiled_model,
                   train_data_gen=train_data_gen,
@@ -42,7 +40,8 @@ def main():
                   val_data_gen=val_data_gen,
                   n_iter_val=n_iter_val,
                   class_weight=class_weight,
-                  callbacks=callbacks)
+                  callbacks=callbacks,
+                  active_run=active_run)
 
 
 if __name__ == '__main__':

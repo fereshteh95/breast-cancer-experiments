@@ -1,4 +1,6 @@
 from model_factory import ModelBuilderBase
+from pathlib import Path
+import shutil
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,12 +10,14 @@ from sklearn import metrics
 from prettytable import PrettyTable
 import mlflow
 import typing
+from model_factory import PatchModel
+from trainer import Exporter
 
 
 class Evaluator:
     def __init__(self, config):
         self.config = config
-        self.history_path = self.config.info_training.history_output_path
+        # self.history_path = self.config.info_training.history_output_path
         self.saving_path = self.config.evaluation.saving_dir
         self.random_seed = self.config.general_info.random_seed
         self.class_names = self.config.general_info.classes
@@ -34,7 +38,17 @@ class Evaluator:
                  active_run: typing.Optional[mlflow.ActiveRun] = None
                  ):
 
-        with mlflow.start_run(nested=True):
+        with active_run as active_run:
+            run_id = active_run.info.run_id
+
+            mlflow.log_param('base_model_name', self.config.mlflow.model_name)
+            mlflow.log_param('training_mode', self.config.mlflow.training_mode)
+            mlflow.log_param('image_height', self.config.general_info.image_height)
+            mlflow.log_param('image_width', self.config.general_info.image_width)
+            mlflow.log_param('image_channels', self.config.general_info.image_channels)
+            mlflow.log_param('learning_rate', self.config.info_training.initial_learning_rate)
+            mlflow.log_param('dataset_name', self.config.mlflow.dataset)
+
             predictions = model.predict(test_data_gen, verbose=1)
             y_truth = test_data_gen.get_y_true()
             predictions_arg = np.argmax(predictions, axis=1)
@@ -46,8 +60,6 @@ class Evaluator:
             self.y_truth_arg = y_truth_arg
             self.predictions_arg = predictions_arg
             self.y_pred_multi = y_pred_multi
-
-            self.plot_history()
 
             if self.confusion_matrix_flag:
                 self.print_confusion_matrix()
@@ -71,30 +83,16 @@ class Evaluator:
             for i in range(len(self.class_names)):
                 clss_df = df.loc[df['Class Names'] == self.class_names[i]]
                 for j in range(len(metric_names)):
-                    metrics_dict[self.class_names[i]+'_'+metric_names[j]] = clss_df[metric_names[j]].values[0]
+                    metrics_dict[self.class_names[i] + '_' + metric_names[j]] = clss_df[metric_names[j]].values[0]
             mlflow.log_metrics(metrics_dict)
 
-    def plot_history(self):
-        history_path = self.history_path
-        history = pd.read_csv(history_path)
+            pyfuncmodel = PatchModel()
+            exporter = Exporter(self.config, self.run_dir)
+            exporter.log_model_to_mlflow(active_run,
+                                         pyfuncmodel,
+                                         Path('../config.yaml')
+                                         )
 
-        plt.figure(figsize=(8, 4))
-        plt.subplot(1,2,1)
-        plt.plot(history['loss'].values)
-        plt.plot(history['val_loss'].values)
-        plt.title('model loss')
-        plt.ylabel('loss')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'val'], loc='upper left')
-
-        plt.subplot(1,2,2)
-        plt.plot(history['accuracy'].values)
-        plt.plot(history['val_accuracy'].values)
-        plt.title('model accuracy')
-        plt.ylabel('accuracy')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'val'], loc='upper left')
-        plt.savefig(self.saving_path+"/History.png")
 
     def calc_confusion_matrix(self):
         matrix = confusion_matrix(self.y_truth_arg, self.predictions_arg)
@@ -109,7 +107,7 @@ class Evaluator:
         plt.title('Confusion Matrix')
         plt.ylabel('True Label')
         plt.xlabel('Predicted Label')
-        plt.savefig(self.saving_path+"/print_confusion_matrix.png")
+        plt.savefig(self.saving_path + "/print_confusion_matrix.png")
 
     def calc_rates(self, i):
         y_class_pred = self.y_pred_multi[:, i]
@@ -229,7 +227,7 @@ class Evaluator:
         plt.ylabel('Precision')
         plt.title('Precision-Recall Curve')
         plt.legend(loc="lower left")
-        plt.savefig(self.saving_path+'/'+save_name + '.png')
+        plt.savefig(self.saving_path + '/' + save_name + '.png')
 
     def print_auc_curves(self):
         y_true = self.y_truth
@@ -258,5 +256,4 @@ class Evaluator:
         plt.ylabel('True Positive Rate')
         plt.title('Receiver Operating Characteristic Curve')
         plt.legend(loc="lower right")
-        plt.savefig(self.saving_path+'/'+save_name + '.png')
-        
+        plt.savefig(self.saving_path + '/' + save_name + '.png')

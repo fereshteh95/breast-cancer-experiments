@@ -8,6 +8,7 @@
 """
 from pathlib import Path
 from omegaconf import OmegaConf
+import tensorflow as tf
 
 from model_factory import PatchModelBuilder
 from data_pipeline import DataLoader
@@ -21,14 +22,14 @@ def main():
     config = OmegaConf.load(config_file_path)
     evaluator = Evaluator(config)
 
-    model_builder = PatchModelBuilder(config, phase='evaluation')
-    compiled_model = model_builder.get_model()
+    model = tf.keras.models.load_model(config.general_info.best_weights_path)
     data_loader = DataLoader(config)
     test_data_gen, _ = data_loader.create_test_generator()
-    setup_mlflow_active_run(config_path=config_file_path, is_evaluation=True)
+    active_run = setup_mlflow_active_run(config_path=config_file_path, is_evaluation=True)
 
-    evaluator.evaluate(model=compiled_model,
-                       test_data_gen=test_data_gen
+    evaluator.evaluate(model=model,
+                       test_data_gen=test_data_gen,
+                       active_run=active_run
                        )
 
 

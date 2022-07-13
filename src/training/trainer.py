@@ -48,15 +48,16 @@ class Trainer(TrainerBase):
 
         print(f'available GPU devices: {tf.config.list_physical_devices()}')
 
-        with mlflow.start_run(nested=True) as active_run:
+        with active_run as active_run:
             run_id = active_run.info.run_id
 
             mlflow.log_param('base_model_name', self.config.mlflow.model_name)
+            mlflow.log_param('training_mode', self.config.mlflow.training_mode)
             mlflow.log_param('num_epochs', self.config.info_training.epochs)
             mlflow.log_param('train_batch_size', self.config.general_info.train_batch_size)
             mlflow.log_param('validation_batch_size', self.config.general_info.val_batch_size)
-            mlflow.log_param('image_height', self.config.general_info.image_height_patch)
-            mlflow.log_param('image_width', self.config.general_info.image_width_patch)
+            mlflow.log_param('image_height', self.config.general_info.image_height)
+            mlflow.log_param('image_width', self.config.general_info.image_width)
             mlflow.log_param('image_channels', self.config.general_info.image_channels)
             mlflow.log_param('learning_rate', self.config.info_training.initial_learning_rate)
             mlflow.log_param('dataset_name', self.config.mlflow.dataset)
@@ -138,22 +139,22 @@ class Trainer(TrainerBase):
 
                 history = model.fit(
                     train_data_gen,
-                    steps_per_epoch=n_iter_train // 40,
+                    steps_per_epoch=n_iter_train,
                     epochs=self.epochs,
                     validation_data=val_data_gen,
-                    validation_steps=n_iter_val // 40,
+                    validation_steps=n_iter_val,
                     callbacks=callbacks,
                     class_weight=class_weight
 
                 )
                 self.history = history
 
-            pyfuncmodel = PatchModel()
-            exporter = Exporter(self.config, self.run_dir)
-            exporter.log_model_to_mlflow(active_run,
-                                         pyfuncmodel,
-                                         Path('../config.yaml')
-                                         )
+        pyfuncmodel = PatchModel()
+        exporter = Exporter(self.config, self.run_dir)
+        exporter.log_model_to_mlflow(active_run,
+                                     pyfuncmodel,
+                                     Path('../config.yaml')
+                                     )
 
     def _write_mlflow_run_id(self, run: mlflow.ActiveRun):
         run_id_path = self.run_dir.joinpath('run_id.txt')
@@ -276,8 +277,7 @@ class Exporter:
 
         with active_run as _:
             artifacts = {
-                "savedmodel_path": str(best_model_info['path']).replace('../',
-                                                                        '/content/breast-cancer-experiments/'),
+                "savedmodel_path": str(best_model_info['path']),
                 "config_path": str(config_path)
             }
 
