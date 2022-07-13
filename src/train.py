@@ -20,14 +20,14 @@ from training import Trainer
 def main():
     config_file_path = Path('../config.yaml')
     config = OmegaConf.load(config_file_path)
-    run_dir = Path('../run')
-    exported_dir = Path('../exported')
+    run_dir = Path(config.info_training.run)
+    exported_dir = Path(config.info_training.export)
     trainer = Trainer(config, run_dir, exported_dir)
 
     model_builder = PatchModelBuilder(config, phase='train')
     compiled_model = model_builder.get_model()
-    if config.info_training.use_best_weights:
-        compiled_model.load_weights(config.general_info.best_weights_path)
+    # if config.info_training.use_best_weights:
+    #     compiled_model.load_weights(config.general_info.best_weights_path)
     callbacks = model_builder.get_callbacks()
 
     data_loader = DataLoader(config)

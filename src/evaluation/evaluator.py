@@ -14,6 +14,7 @@ class Evaluator:
     def __init__(self, config):
         self.config = config
         self.history_path = self.config.info_training.history_output_path
+        self.saving_path = self.config.evaluation.saving_dir
         self.random_seed = self.config.general_info.random_seed
         self.class_names = self.config.general_info.classes
         self.confusion_matrix_flag = self.config.evaluation.confusion_matrix
@@ -34,42 +35,51 @@ class Evaluator:
                  ):
 
         with mlflow.start_run(nested=True):
-            mlflow.tensorflow.autolog()
             predictions = model.predict(test_data_gen, verbose=1)
-        y_truth = test_data_gen.get_y_true()
-        predictions_arg = np.argmax(predictions, axis=1)
-        y_pred_multi = np.eye((len(self.class_names)))[predictions_arg]
-        y_truth_arg = np.argmax(y_truth, axis=1)
+            y_truth = test_data_gen.get_y_true()
+            predictions_arg = np.argmax(predictions, axis=1)
+            y_pred_multi = np.eye((len(self.class_names)))[predictions_arg]
+            y_truth_arg = np.argmax(y_truth, axis=1)
 
-        self.y_truth = y_truth
-        self.predictions = predictions
-        self.y_truth_arg = y_truth_arg
-        self.predictions_arg = predictions_arg
-        self.y_pred_multi = y_pred_multi
+            self.y_truth = y_truth
+            self.predictions = predictions
+            self.y_truth_arg = y_truth_arg
+            self.predictions_arg = predictions_arg
+            self.y_pred_multi = y_pred_multi
 
-        self.plot_history()
+            self.plot_history()
 
-        if self.confusion_matrix_flag:
-            self.print_confusion_matrix()
+            if self.confusion_matrix_flag:
+                self.print_confusion_matrix()
 
-        if self.performance_metrics_flag:
-            self.print_performance_metrics(self.y_truth_arg, self.predictions_arg)
+            if self.performance_metrics_flag:
+                self.print_performance_metrics(self.y_truth_arg, self.predictions_arg)
 
-        if self.classification_report_flag:
-            cr = self.classification_report()
-            print(cr)
+            if self.classification_report_flag:
+                cr = self.classification_report()
+                print(cr)
 
-        if self.precision_recall_flag:
-            self.print_precision_recall_curves()
+            if self.precision_recall_flag:
+                self.print_precision_recall_curves()
 
-        if self.auc_flag:
-            self.print_auc_curves()
+            if self.auc_flag:
+                self.print_auc_curves()
+
+            df = pd.read_csv(self.config.evaluation.eval_saving_path)
+            metric_names = df.columns[2:]
+            metrics_dict = {}
+            for i in range(len(self.class_names)):
+                clss_df = df.loc[df['Class Names'] == self.class_names[i]]
+                for j in range(len(metric_names)):
+                    metrics_dict[self.class_names[i]+'_'+metric_names[j]] = clss_df[metric_names[j]].values[0]
+            mlflow.log_metrics(metrics_dict)
 
     def plot_history(self):
         history_path = self.history_path
         history = pd.read_csv(history_path)
 
-        plt.figure(figsize=(6, 3))
+        plt.figure(figsize=(8, 4))
+        plt.subplot(1,2,1)
         plt.plot(history['loss'].values)
         plt.plot(history['val_loss'].values)
         plt.title('model loss')
@@ -77,13 +87,14 @@ class Evaluator:
         plt.xlabel('epoch')
         plt.legend(['train', 'val'], loc='upper left')
 
-        plt.figure(figsize=(6, 3))
+        plt.subplot(1,2,2)
         plt.plot(history['accuracy'].values)
         plt.plot(history['val_accuracy'].values)
         plt.title('model accuracy')
         plt.ylabel('accuracy')
         plt.xlabel('epoch')
         plt.legend(['train', 'val'], loc='upper left')
+        plt.savefig(self.saving_path+"/History.png")
 
     def calc_confusion_matrix(self):
         matrix = confusion_matrix(self.y_truth_arg, self.predictions_arg)
@@ -92,13 +103,13 @@ class Evaluator:
 
     def print_confusion_matrix(self):
         cm = self.calc_confusion_matrix()
-        plt.figure(figsize=(6, 4))
+        plt.figure(figsize=(10, 15))
         sns.heatmap(cm, cmap='crest', linecolor='white', linewidths=1, annot=True, xticklabels=self.class_names,
                     yticklabels=self.class_names)
         plt.title('Confusion Matrix')
         plt.ylabel('True Label')
         plt.xlabel('Predicted Label')
-        plt.savefig("print_confusion_matrix.png")
+        plt.savefig(self.saving_path+"/print_confusion_matrix.png")
 
     def calc_rates(self, i):
         y_class_pred = self.y_pred_multi[:, i]
@@ -124,8 +135,8 @@ class Evaluator:
 
         acc = np.round(accuracy_score(self.y_truth_arg, self.predictions_arg), 4)
         print('Total Accuracy:', acc)
-        columns = ['label', 'Class Names', 'Sensitivity(Recall)', 'Specifity',
-                   'PPV(Precision)', 'NPV', 'Prevalence', 'Accuracy', 'F1_Score', 'Support']
+        columns = ['label', 'Class Names', 'Sensitivity', 'Specificity',
+                   'PPV', 'NPV', 'Prevalence', 'Accuracy', 'F1_Score', 'Support']
         myTable = PrettyTable(columns)
 
         all_metrics = []
@@ -142,6 +153,7 @@ class Evaluator:
                                 Specifity, PPV_precision, NPV, prevalence, acc_sp, f1_score, support])
             myTable.add_row(metrics_list[-1])
         metrics_df = pd.DataFrame(all_metrics, columns=columns)
+        metrics_df.to_csv(self.config.evaluation.eval_saving_path, index=False)
         # print(metrics_df)
 
         metrics_values = metrics_df.iloc[:, 2:].values
@@ -191,7 +203,7 @@ class Evaluator:
         y_true = self.y_truth
         y_hat = self.predictions
         class_names = self.class_names
-        save_name = 'PRCurve'
+        save_name = 'PR_Curve'
         # For each class
         precision = dict()
         recall = dict()
@@ -217,7 +229,7 @@ class Evaluator:
         plt.ylabel('Precision')
         plt.title('Precision-Recall Curve')
         plt.legend(loc="lower left")
-        plt.savefig(save_name + '.png', dpi=600)
+        plt.savefig(self.saving_path+'/'+save_name + '.png')
 
     def print_auc_curves(self):
         y_true = self.y_truth
@@ -246,5 +258,5 @@ class Evaluator:
         plt.ylabel('True Positive Rate')
         plt.title('Receiver Operating Characteristic Curve')
         plt.legend(loc="lower right")
-        plt.savefig(save_name + '.png', dpi=600)
-        plt.show()
+        plt.savefig(self.saving_path+'/'+save_name + '.png')
+        

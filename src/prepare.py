@@ -1,7 +1,7 @@
 import numpy as np
+import tensorflow as tf
 from sklearn.utils.class_weight import compute_class_weight
 import tensorflow.keras.backend as K
-from tensorflow.keras.metrics import AUC
 
 
 class Preparation:
@@ -38,8 +38,13 @@ class Preparation:
 
     @staticmethod
     def metrics_define(num_classes):
-        metrics_all = ['accuracy',
-                       AUC(curve='PR', multi_label=True, num_labels=num_classes, name='auc_pr'),
-                       AUC(multi_label=True, num_labels=num_classes, name='auc_roc'),
-                       ]
-        return metrics_all
+        metrics = ['accuracy',
+                   tf.keras.metrics.SensitivityAtSpecificity(0.8),
+                   tf.keras.metrics.AUC(curve='PR', name='auc_pr'),
+                   tf.keras.metrics.AUC(name='auc_roc'),
+                   tf.keras.metrics.FalseNegatives(),
+                   tf.keras.metrics.FalsePositives(),
+                   tf.keras.metrics.TrueNegatives(),
+                   tf.keras.metrics.TruePositives()]
+
+        return metrics
