@@ -24,7 +24,9 @@ def main():
     model = tf.keras.models.load_model(config.general_info.best_weights_path)
     data_loader = DataLoader(config)
     test_data_gen, _ = data_loader.create_test_generator()
-    active_run = setup_mlflow_active_run(config_path=config_file_path, is_evaluation=True)
+    active_run = setup_mlflow_active_run(config_path=config_file_path,
+                                         session_type='evaluation'
+                                         )
 
     evaluator.evaluate(model=model,
                        test_data_gen=test_data_gen,

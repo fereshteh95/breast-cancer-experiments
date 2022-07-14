@@ -5,7 +5,7 @@ general_info:
   image_source_dir_train : ''
   image_source_dir_val : ''
   image_source_dir_test : ''
-  best_weights_path : '/content/drive/MyDrive/BR-Runs/Run3/run'
+  best_weights_path : '/content/drive/MyDrive/BR-Runs/Run3/run/checkpoints'
   activation : 'softmax'
   image_height : 256
   image_width : 256
@@ -41,7 +41,7 @@ data_sequence:
   steps : None
   shuffle_on_epoch_end : True
   augmenter: False
-  synthesize: True
+  synthesize: False
 
 augmentation:
   rotation_range: 10

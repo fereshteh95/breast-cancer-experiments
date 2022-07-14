@@ -11,7 +11,7 @@ from prettytable import PrettyTable
 import mlflow
 import typing
 from model_factory import PatchModel
-from trainer import Exporter
+from training import Exporter
 
 
 class Evaluator:
@@ -86,12 +86,12 @@ class Evaluator:
                     metrics_dict[self.class_names[i] + '_' + metric_names[j]] = clss_df[metric_names[j]].values[0]
             mlflow.log_metrics(metrics_dict)
 
-        pyfuncmodel = PatchModel()
-        exporter = Exporter(self.config, self.run_dir)
-        exporter.log_model_to_mlflow(active_run,
-                                     pyfuncmodel,
-                                     Path('../config.yaml')
-                                     )
+        # pyfuncmodel = PatchModel()
+        # exporter = Exporter(self.config, self.run_dir)
+        # exporter.log_model_to_mlflow(active_run,
+        #                              pyfuncmodel,
+        #                              Path('../config.yaml')
+        #                              )
 
     def calc_confusion_matrix(self):
         matrix = confusion_matrix(self.y_truth_arg, self.predictions_arg)
@@ -100,7 +100,7 @@ class Evaluator:
 
     def print_confusion_matrix(self):
         cm = self.calc_confusion_matrix()
-        plt.figure(figsize=(10, 15))
+        plt.figure(figsize=(12, 8))
         sns.heatmap(cm, cmap='crest', linecolor='white', linewidths=1, annot=True, xticklabels=self.class_names,
                     yticklabels=self.class_names)
         plt.title('Confusion Matrix')
