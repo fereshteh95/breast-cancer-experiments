@@ -73,7 +73,7 @@ def main(test_size: float):
 
     train_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
     train_df['imgfile'] = x_names
-    train_df[class_names] = labels
+    train_df[columns[1:]] = labels
 
     x_names = []
     labels = []
@@ -88,7 +88,7 @@ def main(test_size: float):
 
     val_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
     val_df['imgfile'] = x_names
-    val_df[class_names] = labels
+    val_df[columns[1:]] = labels
 
     df_1 = pd.read_csv(path_to_labels_1)
     df_2 = pd.read_csv(path_to_labels_2)
@@ -115,7 +115,7 @@ def main(test_size: float):
 
     test_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
     test_df['imgfile'] = x_names
-    test_df[class_names] = labels
+    test_df[columns[1:]] = labels
 
     train_df.to_csv(train_csv_file, index=False)
     val_df.to_csv(validation_csv_file, index=False)

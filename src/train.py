@@ -36,9 +36,9 @@ def main():
 
     trainer.train(model=compiled_model,
                   train_data_gen=train_data_gen,
-                  n_iter_train=n_iter_train//40,
+                  n_iter_train=n_iter_train,
                   val_data_gen=val_data_gen,
-                  n_iter_val=n_iter_val//40,
+                  n_iter_val=n_iter_val,
                   class_weight=class_weight,
                   callbacks=callbacks,
                   active_run=active_run)
