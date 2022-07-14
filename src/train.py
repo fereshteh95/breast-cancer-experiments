@@ -9,12 +9,11 @@
 from pathlib import Path
 from omegaconf import OmegaConf
 
-from model_factory import PatchModelBuilder
+from model_factory import WholeModelBuilder
 from data_pipeline import DataLoader
 from utils import setup_mlflow_active_run
 
-from model_factory import PatchModel
-from training import Trainer, Exporter
+from training import Trainer
 
 
 def main():
@@ -24,7 +23,7 @@ def main():
     exported_dir = Path(config.info_training.export)
     trainer = Trainer(config, run_dir, exported_dir)
 
-    model_builder = PatchModelBuilder(config, phase='train')
+    model_builder = WholeModelBuilder(config, phase='train')
     compiled_model = model_builder.get_model()
     callbacks = model_builder.get_callbacks()
 
@@ -43,16 +42,6 @@ def main():
                   class_weight=class_weight,
                   callbacks=callbacks,
                   active_run=active_run)
-
-    # active_run = setup_mlflow_active_run(config_path=config_file_path,
-    #                                      session_type='export'
-    #                                      )
-    #
-    # pyfuncmodel = PatchModel()
-    # exporter = Exporter(config, run_dir)
-    # exporter.log_model_to_mlflow(active_run=active_run,
-    #                              pyfunc_model=pyfuncmodel,
-    #                              config_path=config_file_path)
 
 
 if __name__ == '__main__':

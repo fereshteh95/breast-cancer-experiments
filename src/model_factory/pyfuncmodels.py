@@ -1,7 +1,7 @@
 import mlflow
 
 
-class PatchModel(mlflow.pyfunc.PythonModel):
+class PyfuncModel(mlflow.pyfunc.PythonModel):
 
     def load_context(self, context):
         import tensorflow as tf

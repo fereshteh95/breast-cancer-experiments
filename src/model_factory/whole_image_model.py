@@ -6,7 +6,6 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l1, l2, l1_l2
 from tensorflow.keras import backend as K
 
-from .patch_resnet_model import PatchModelBuilder
 from prepare import Preparation
 from .base import ModelBuilderBase
 
@@ -222,8 +221,8 @@ class WholeModelBuilder(ModelBuilderBase):
     def __init__(self, config, dropout=True, lr=1e-5, dropout_rate=.3, phase=None) -> None:
         super().__init__(config)
         self. class_names = self.config.general_info.classes
-        self.input_shape = (self.config.general_info.image_height_whole,
-                            self.config.general_info.image_width_whole,
+        self.input_shape = (self.config.general_info.image_height,
+                            self.config.general_info.image_width,
                             self.config.general_info.image_channels
                             )
         self.classes = len(self. class_names)
@@ -243,11 +242,10 @@ class WholeModelBuilder(ModelBuilderBase):
         Returns:
             A compiled ``tensorflow.keras`` model.
         """
-        patch_model_cls = PatchModelBuilder(self.config)
-        patch_model = patch_model_cls.get_model()
-        patch_model.load_weights(self.patch_model_weight)
-        image_model = add_top_layers(patch_model,
-                                     self.activation,
+        patch_model = tf.keras.models.load_model(self.config.general_info.patch_model_weight)
+        image_model = add_top_layers(model=patch_model,
+                                     image_size=self.input_shape,
+                                     activation=self.activation,
                                      nb_class=self.classes,
                                      )
         if self.phase == 'train':
@@ -256,7 +254,7 @@ class WholeModelBuilder(ModelBuilderBase):
             optimizer = Adam(learning_rate=self.lr)
             image_model.compile(optimizer=optimizer, loss=self.loss, metrics=metrics_all)
         elif self.phase == 'evaluation':
-            image_model.load_weights(self.config.general_info.best_weights_path)
+            image_model = image_model
         return image_model
 
     def get_callbacks(self) -> list:
@@ -267,14 +265,11 @@ class WholeModelBuilder(ModelBuilderBase):
             Still, you can return each of these two callbacks, and orchestrator will modify your callbacks if needed.
 
         """
-        check1 = ModelCheckpoint(self.output_weights_name,
-                                 monitor='val_accuracy',
-                                 verbose=1,
-                                 save_best_only=True,
-                                 save_weights_only=True,
-                                 mode='max')
 
-        lr_reduction = ReduceLROnPlateau(monitor='val_accuracy', factor=0.9, patience=1, verbose=1, mode="max",
+        lr_reduction = ReduceLROnPlateau(monitor=self.config.info_training.export_metric,
+                                         factor=0.9,
+                                         patience=1,
+                                         verbose=1,
+                                         mode=self.config.info_training.export_mode,
                                          min_lr=1e-8)
-        history_logger = CSVLogger(self. history_output_path, separator=",", append=True)
-        return [check1, lr_reduction, history_logger]
+        return [lr_reduction]

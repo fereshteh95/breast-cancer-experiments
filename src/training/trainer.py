@@ -4,7 +4,7 @@ import shutil
 from model_factory import ModelBuilderBase
 from prepare import Preparation
 from .base import TrainerBase
-from model_factory import PatchModel
+from model_factory import PyfuncModel
 
 import tensorflow as tf
 import os
@@ -62,99 +62,40 @@ class Trainer(TrainerBase):
             mlflow.log_param('learning_rate', self.config.info_training.initial_learning_rate)
             mlflow.log_param('dataset_name', self.config.mlflow.dataset)
 
-            if self.three_phase_training:
+            if retrain or not any(_get_checkpoints(self.checkpoints_dir)):
+                shutil.rmtree(self.checkpoints_dir, ignore_errors=True)
+                shutil.rmtree(self.tensorboard_log_dir, ignore_errors=True)
 
-                prepare = Preparation()
-                metrics_all = prepare.metrics_define(len(self.class_names))
+                self.checkpoints_dir.mkdir(exist_ok=True, parents=True)
+                self.tensorboard_log_dir.mkdir(exist_ok=True, parents=True)
 
-                for layer in model.layers[:-1]:
-                    layer.trainable = False
-
-                optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
-                model.compile(optimizer=optimizer, loss=self.config.info_training.loss,
-                              metrics=metrics_all)
-
-                history1 = model.fit(
-                    train_data_gen,
-                    steps_per_epoch=n_iter_train,
-                    epochs=3,
-                    validation_data=val_data_gen,
-                    validation_steps=n_iter_val,
-                    callbacks=callbacks,
-                    class_weight=class_weight
-                )
-
-                for layer in model.layers[162:]:
-                    layer.trainable = True
-
-                optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
-
-                model.compile(optimizer=optimizer, loss=self.config.info_training.loss,
-                              metrics=metrics_all)
-
-                history2 = model.fit(
-                    train_data_gen,
-                    steps_per_epoch=n_iter_train,
-                    epochs=10,
-                    validation_data=val_data_gen,
-                    validation_steps=n_iter_val,
-                    callbacks=callbacks,
-                    class_weight=class_weight
-                )
-
-                for layer in model.layers[:162]:
-                    layer.trainable = True
-
-                optimizer = tf.keras.optimizers.Adam(learning_rate=1e-5)
-                model.compile(optimizer=optimizer, loss=self.config.info_training.loss,
-                              metrics=metrics_all)
-
-                history3 = model.fit(
-                    train_data_gen,
-                    steps_per_epoch=n_iter_train,
-                    epochs=10,
-                    validation_data=val_data_gen,
-                    validation_steps=n_iter_val,
-                    callbacks=callbacks,
-                    class_weight=class_weight
-                )
-
+                initial_epoch = 0
+                model = model
+                initial_threshold = None
             else:
+                model, initial_epoch, initial_threshold = self._load_latest_model()
+                mlflow.set_tag('session_type', 'resumed_training')
 
-                if retrain or not any(_get_checkpoints(self.checkpoints_dir)):
-                    shutil.rmtree(self.checkpoints_dir, ignore_errors=True)
-                    shutil.rmtree(self.tensorboard_log_dir, ignore_errors=True)
+            callbacks = self._get_callbacks(callbacks,  active_run, initial_threshold)
 
-                    self.checkpoints_dir.mkdir(exist_ok=True, parents=True)
-                    self.tensorboard_log_dir.mkdir(exist_ok=True, parents=True)
+            history = model.fit(
+                train_data_gen,
+                steps_per_epoch=n_iter_train,
+                epochs=self.epochs,
+                validation_data=val_data_gen,
+                validation_steps=n_iter_val,
+                callbacks=callbacks,
+                class_weight=class_weight
 
-                    initial_epoch = 0
-                    model = model
-                    initial_threshold = None
-                else:
-                    model, initial_epoch, initial_threshold = self._load_latest_model()
-                    mlflow.set_tag('session_type', 'resumed_training')
+            )
+            self.history = history
 
-                callbacks = self._get_callbacks(callbacks,  active_run, initial_threshold)
-
-                history = model.fit(
-                    train_data_gen,
-                    steps_per_epoch=n_iter_train,
-                    epochs=self.epochs,
-                    validation_data=val_data_gen,
-                    validation_steps=n_iter_val,
-                    callbacks=callbacks,
-                    class_weight=class_weight
-
-                )
-                self.history = history
-
-        pyfuncmodel = PatchModel()
-        exporter = Exporter(self.config, self.run_dir)
-        exporter.log_model_to_mlflow(active_run,
-                                     pyfuncmodel,
-                                     Path('../config.yaml')
-                                     )
+        # pyfuncmodel = PyfuncModel()
+        # exporter = Exporter(self.config, self.run_dir)
+        # exporter.log_model_to_mlflow(active_run,
+        #                              pyfuncmodel,
+        #                              Path('../config.yaml')
+        #                              )
 
     def _write_mlflow_run_id(self, run: mlflow.ActiveRun):
         run_id_path = self.run_dir.joinpath('run_id.txt')
