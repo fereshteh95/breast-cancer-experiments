@@ -95,8 +95,12 @@ def main(test_size: float):
     df = df_1.append(df_2, ignore_index=True)
     df = df.loc[df['Training_Tag'] == 'Evaluation'].reset_index()
 
-    columns = ['imgfile']
-    columns.extend(class_names)
+    label = []
+
+    for i in range(len(df)):
+        label.append(label_dict[df['Pathology'].values[i] + ' ' + df['Type'].values[i]])
+
+    df[class_names] = label
 
     x_names = []
     labels = []

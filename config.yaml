@@ -2,17 +2,17 @@ general_info:
   multi_view: False
   classes : ['Benign calcification', 'Malignant calcification', 'Benign mass', 'Malignant mass']
   random_seed : 2
-  image_source_dir_train : ''
-  image_source_dir_val : ''
-  image_source_dir_test : ''
+  image_source_dir_train : '../data/'
+  image_source_dir_val : '../data/'
+  image_source_dir_test : '../data/'
   best_weights_path : ''
   activation : 'sigmoid'
   image_height : 1024
   image_width : 768
   image_channels: 3
-  train_batch_size : 2
-  val_batch_size : 2
-  test_batch_size : 2
+  train_batch_size : 1
+  val_batch_size : 1
+  test_batch_size : 1
   patch_model_weight: '/content/drive/MyDrive/BR-Runs/Run3/run/checkpoints'
   patch_training: False
   three_phase_training: False
@@ -54,10 +54,10 @@ mlflow:
   training_mode: 'CC-Image Classifier | Contrast Enhancement'
 
 data:
-  path_to_data_1: '/content/drive/MyDrive/Breast Cancer Preprocessed Data/CBIS.zip'
-  path_to_data_2: '/content/drive/MyDrive/Breast Cancer Preprocessed Data/CMMD.zip'
-  path_to_labels_1: '/content/drive/MyDrive/Breast Cancer Preprocessed Data/cbis-meta-data.csv'
-  path_to_labels_2: '/content/drive/MyDrive/Breast Cancer Preprocessed Data/cmmd-meta-data.csv'
+  path_to_data_1: '/content/drive/MyDrive/Breast Cancer Preprocessed Datasets/CBIS.zip'
+  path_to_data_2: '/content/drive/MyDrive/Breast Cancer Preprocessed Datasets/CMMD.zip'
+  path_to_labels_1: '/content/drive/MyDrive/Breast Cancer Preprocessed Datasets/cbis-meta-data.csv'
+  path_to_labels_2: '/content/drive/MyDrive/Breast Cancer Preprocessed Datasets/cmmd-meta-data.csv'
   view : 'CC'
 
 

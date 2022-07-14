@@ -232,8 +232,6 @@ class WholeModelBuilder(ModelBuilderBase):
         self.dropout_rate = dropout_rate
         self.lr = lr
         self.phase = phase
-        self. history_output_path = '../' + self.config.info_training.history_output_path
-        self.output_weights_name = '../' + self.config.info_training.output_weights_name
         self.patch_model_weight = self.config.general_info.patch_model_weight
 
     def get_model(self, hp=None) -> tf.keras.Model:
