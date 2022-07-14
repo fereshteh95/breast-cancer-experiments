@@ -105,7 +105,7 @@ def main(test_size: float):
     x_names = []
     labels = []
     for i in range(len(df)):
-        df_i = df.iloc[x_test[i]]
+        df_i = df.iloc[i]
 
         x = df_i[view]
         y = df_i[class_names]
