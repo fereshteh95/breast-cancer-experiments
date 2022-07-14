@@ -13,8 +13,8 @@ from model_factory import PatchModelBuilder
 from data_pipeline import DataLoader
 from utils import setup_mlflow_active_run
 
-
-from training import Trainer
+from model_factory import PatchModel
+from training import Trainer, Exporter
 
 
 def main():
@@ -32,16 +32,27 @@ def main():
     train_data_gen, n_iter_train = data_loader.create_training_generator()
     val_data_gen, n_iter_val = data_loader.create_validation_generator()
     class_weight = data_loader.get_class_weight()
-    active_run = setup_mlflow_active_run(config_path=config_file_path, is_evaluation=False)
+    active_run = setup_mlflow_active_run(config_path=config_file_path,
+                                         session_type='train')
 
     trainer.train(model=compiled_model,
                   train_data_gen=train_data_gen,
-                  n_iter_train=n_iter_train,
+                  n_iter_train=n_iter_train//40,
                   val_data_gen=val_data_gen,
-                  n_iter_val=n_iter_val,
+                  n_iter_val=n_iter_val//40,
                   class_weight=class_weight,
                   callbacks=callbacks,
                   active_run=active_run)
+
+    # active_run = setup_mlflow_active_run(config_path=config_file_path,
+    #                                      session_type='export'
+    #                                      )
+    #
+    # pyfuncmodel = PatchModel()
+    # exporter = Exporter(config, run_dir)
+    # exporter.log_model_to_mlflow(active_run=active_run,
+    #                              pyfunc_model=pyfuncmodel,
+    #                              config_path=config_file_path)
 
 
 if __name__ == '__main__':

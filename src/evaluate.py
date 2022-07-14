@@ -10,7 +10,6 @@ from pathlib import Path
 from omegaconf import OmegaConf
 import tensorflow as tf
 
-from model_factory import PatchModelBuilder
 from data_pipeline import DataLoader
 from utils import setup_mlflow_active_run
 
