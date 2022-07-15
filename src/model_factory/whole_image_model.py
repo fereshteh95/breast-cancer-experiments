@@ -265,7 +265,7 @@ class WholeModelBuilder(ModelBuilderBase):
         """
 
         lr_reduction = ReduceLROnPlateau(monitor=self.config.info_training.export_metric,
-                                         factor=0.9,
+                                         factor=0.8,
                                          patience=1,
                                          verbose=1,
                                          mode=self.config.info_training.export_mode,

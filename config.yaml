@@ -18,8 +18,8 @@ general_info:
   three_phase_training: False
 
 info_training:
-  run : '/content/drive/MyDrive/BR-Runs/whole/clahe/Run1/run'
-  export: '/content/drive/MyDrive/BR-Runs/whole/clahe/Run1/export'
+  run : '/content/drive/MyDrive/BR-Runs/whole/clahe/Run2/run'
+  export: '/content/drive/MyDrive/BR-Runs/whole/clahe/Run2/export'
   epochs : 20
   initial_learning_rate: 1e-3
   loss : 'categorical_crossentropy'
@@ -69,7 +69,7 @@ evaluation:
   auc_curves : True
   wrong_prediction : "positive"
   explainability : True
-  eval_saving_path : '/content/drive/MyDrive/BR-Runs/whole/clahe/Run1/evaluate.csv'
-  saving_dir : '/content/drive/MyDrive/BR-Runs/whole/clahe/Run1'
+  eval_saving_path : '/content/drive/MyDrive/BR-Runs/whole/clahe/Run2/evaluate.csv'
+  saving_dir : '/content/drive/MyDrive/BR-Runs/whole/clahe/Run2'
 
 
