@@ -23,7 +23,7 @@ def main(test_size: float):
     path_to_labels_1 = config.data.path_to_labels_1
     path_to_labels_2 = config.data.path_to_labels_2
 
-    data_dir_1 = '../data/'+path_to_data_1.split('/')[-1].split('.')[0]
+    data_dir_1 = '../data/' + path_to_data_1.split('/')[-1].split('.')[0]
     data_dir_2 = '../data/' + path_to_data_2.split('/')[-1].split('.')[0]
     train_csv_file = config.data_sequence.train_csv_file
     validation_csv_file = config.data_sequence.validation_csv_file
@@ -36,13 +36,12 @@ def main(test_size: float):
         'Benign calcification': [1, 0, 0, 0],
         'Malignant calcification': [0, 1, 0, 0],
         'Benign mass': [0, 0, 1, 0],
-        'Malignant mass': [0, 0, 0, 1],
-        'Benign both': [1, 0, 1, 0],
-        'Malignant both': [0, 1, 0, 1]
+        'Malignant mass': [0, 0, 0, 1]
     }
     df_1 = pd.read_csv(path_to_labels_1)
     df_2 = pd.read_csv(path_to_labels_2)
     df = df_1.append(df_2, ignore_index=True)
+    df = df.loc[df['Type'] != 'both']
     df = df.loc[df['Training_Tag'] == 'Train'].reset_index()
 
     label = []
@@ -93,6 +92,7 @@ def main(test_size: float):
     df_1 = pd.read_csv(path_to_labels_1)
     df_2 = pd.read_csv(path_to_labels_2)
     df = df_1.append(df_2, ignore_index=True)
+    df = df.loc[df['Type'] != 'both']
     df = df.loc[df['Training_Tag'] == 'Evaluation'].reset_index()
 
     label = []
@@ -124,5 +124,3 @@ def main(test_size: float):
 
 if __name__ == '__main__':
     main()
-
-
