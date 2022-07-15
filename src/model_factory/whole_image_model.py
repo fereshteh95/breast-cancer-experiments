@@ -230,7 +230,7 @@ class WholeModelBuilder(ModelBuilderBase):
         self.loss = self.config.info_training.loss
         self.dropout = dropout
         self.dropout_rate = dropout_rate
-        self.lr = lr
+        self.lr = self.config.info_training.initial_learning_rate
         self.phase = phase
         self.patch_model_weight = self.config.general_info.patch_model_weight
 
