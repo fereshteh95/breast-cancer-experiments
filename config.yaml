@@ -13,7 +13,7 @@ general_info:
   train_batch_size : 4
   val_batch_size : 4
   test_batch_size : 4
-  patch_model_weight: '/content/drive/MyDrive/BR-Runs/Run7/run/checkpoints'
+  patch_model_weight: '/content/drive/MyDrive/BR-Runs/Run7/run/checkpoints/sm-0002-0.73056'
   patch_training: False
   three_phase_training: False
 

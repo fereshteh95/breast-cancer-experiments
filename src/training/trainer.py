@@ -125,8 +125,8 @@ class Trainer(TrainerBase):
         tb_callbacks = [i for i in callbacks if isinstance(i, tf.keras.callbacks.TensorBoard)]
 
         to_track = self.config.info_training.export_metric
-        checkpoint_path = str(self.checkpoints_dir) + "/sm-{epoch:04d}"
-        checkpoint_path = checkpoint_path + "-{" + to_track + ":4.5f}"
+        checkpoint_path = str(self.checkpoints_dir) + "/whole-image-classifier-benign-malignant"
+        # checkpoint_path = checkpoint_path + "-{" + to_track + ":4.5f}"
 
         if any(mc_callbacks):
             mc_callbacks[0].filepath = str(checkpoint_path)
