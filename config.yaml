@@ -1,6 +1,6 @@
 general_info:
   multi_view: False
-  classes : ['Benign calcification', 'Malignant calcification', 'Benign mass', 'Malignant mass']
+  classes : ['Benign', 'Malignant']
   random_seed : 2
   image_source_dir_train : '../data/'
   image_source_dir_val : '../data/'
@@ -13,13 +13,13 @@ general_info:
   train_batch_size : 4
   val_batch_size : 4
   test_batch_size : 4
-  patch_model_weight: '/content/drive/MyDrive/BR-Runs/Run5/run/checkpoints'
+  patch_model_weight: '/content/drive/MyDrive/BR-Runs/Run7/run/checkpoints'
   patch_training: False
   three_phase_training: False
 
 info_training:
-  run : '/content/drive/MyDrive/BR-Runs/whole/synthesized/Run1/run'
-  export: '/content/drive/MyDrive/BR-Runs/whole/synthesized/Run1/export'
+  run : '/content/drive/MyDrive/BR-Runs/whole/clahe/Run4/run'
+  export: '/content/drive/MyDrive/BR-Runs/whole/clahe/Run4/export'
   epochs : 20
   initial_learning_rate: 1e-3
   loss : 'categorical_crossentropy'
@@ -41,7 +41,7 @@ data_sequence:
   steps : None
   shuffle_on_epoch_end : True
   augmenter: False
-  synthesize: True
+  synthesize: False
 
 augmentation:
   rotation_range: 10
@@ -51,7 +51,7 @@ augmentation:
 mlflow:
   model_name: 'ResNet50-Extended'
   dataset: 'CBIS and DDSM'
-  training_mode: 'CC-Image Classifier | Image Synthesized'
+  training_mode: 'CC-Image Classifier | Contrast Enhanced'
 
 data:
   path_to_data_1: '/content/drive/MyDrive/Breast Cancer Preprocessed Datasets/CBIS.zip'

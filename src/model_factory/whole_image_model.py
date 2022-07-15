@@ -205,7 +205,6 @@ def add_top_layers(model, image_size, activation,
 
 
 class WholeModelBuilder(ModelBuilderBase):
-
     """
     This class creates a classification model based on the intended backbone.
     It takes the config file and the intended backbone as inputs and adds a dense layer on top of that.You can either
@@ -218,14 +217,15 @@ class WholeModelBuilder(ModelBuilderBase):
         compiled_model = model_builder . get_model()
         callbacks = model_builder. get_callbacks()
     """
+
     def __init__(self, config, dropout=True, lr=1e-5, dropout_rate=.3, phase=None) -> None:
         super().__init__(config)
-        self. class_names = self.config.general_info.classes
+        self.class_names = self.config.general_info.classes
         self.input_shape = (self.config.general_info.image_height,
                             self.config.general_info.image_width,
                             self.config.general_info.image_channels
                             )
-        self.classes = len(self. class_names)
+        self.classes = len(self.class_names)
         self.activation = self.config.general_info.activation
         self.loss = self.config.info_training.loss
         self.dropout = dropout
