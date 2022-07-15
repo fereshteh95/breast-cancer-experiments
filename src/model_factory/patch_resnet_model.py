@@ -28,7 +28,7 @@ class PatchModelBuilder(ModelBuilderBase):
         callbacks = model_builder. get_callbacks()
     """
 
-    def __init__(self, config, dropout=True, lr=1e-5, dropout_rate=.3, phase=None) -> None:
+    def __init__(self, config, dropout=True, lr=1e-5, dropout_rate=.2, phase=None) -> None:
         super().__init__(config)
         self.backbone = ResNet50
         self.class_names = self.config.general_info.classes
@@ -41,7 +41,7 @@ class PatchModelBuilder(ModelBuilderBase):
         self.loss = self.config.info_training.loss
         self.dropout = dropout
         self.dropout_rate = dropout_rate
-        self.lr = lr
+        self.lr = self.config.info_training.initial_learning_rate
         self.phase = phase
         self.three_phase_training = self.config.general_info.three_phase_training
 

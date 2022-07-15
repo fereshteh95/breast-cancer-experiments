@@ -27,17 +27,18 @@ def main(path_to_data: str, path_to_labels: str, test_size: float):
     shutil.unpack_archive(path_to_data, data_dir)
 
     label_dict = {
-        'background': [1, 0, 0, 0, 0],
-        'Benign calcification': [0, 1, 0, 0, 0],
-        'Malignant calcification': [0, 0, 1, 0, 0],
-        'Benign mass': [0, 0, 0, 1, 0],
-        'Malignant mass': [0, 0, 0, 0, 1]
+        'background': [1, 0, 0],
+        'Benign': [0, 1, 0],
+        'Malignant': [0, 0, 1],
+        # 'Benign mass': [0, 0, 0, 1, 0],
+        # 'Malignant mass': [0, 0, 0, 0, 1]
     }
     df = pd.read_csv(path_to_labels)
     df = df.loc[df['Training_Tag'] == 'Train'].reset_index()
 
     x = list(df.index)
     y = df['Label'].values
+    y = [xx.split(' ')[0] for xx in y]
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_seed)
 
@@ -53,7 +54,7 @@ def main(path_to_data: str, path_to_labels: str, test_size: float):
         img = []
         for j in range(len(abn)):
             img.extend(glob.glob('../data/' + abn[j] + '*.jpg'))
-        label = [label_dict[df_i['Label']] for _ in range(len(img))]
+        label = [label_dict[df_i['Label'].split(' ')[0]] for _ in range(len(img))]
         train_imgs.extend(img)
         train_labels.extend(label)
 
@@ -79,7 +80,7 @@ def main(path_to_data: str, path_to_labels: str, test_size: float):
         img = []
         for j in range(len(abn)):
             img.extend(glob.glob('../data/' + abn[j] + '*.jpg'))
-        label = [label_dict[df_i['Label']] for _ in range(len(img))]
+        label = [label_dict[df_i['Label'].split(' ')[0]] for _ in range(len(img))]
         val_imgs.extend(img)
         val_labels.extend(label)
 
@@ -111,7 +112,7 @@ def main(path_to_data: str, path_to_labels: str, test_size: float):
         img = []
         for j in range(len(abn)):
             img.extend(glob.glob('../data/' + abn[j] + '*.jpg'))
-        label = [label_dict[df_i['Label']] for _ in range(len(img))]
+        label = [label_dict[df_i['Label'].split(' ')[0]] for _ in range(len(img))]
         test_imgs.extend(img)
         test_labels.extend(label)
 
