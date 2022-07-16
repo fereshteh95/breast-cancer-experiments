@@ -27,9 +27,9 @@ def setup_mlflow_active_run(config_path: Path,
 
     mlflow.set_tag("session_type", sess_type)  # ['hpo', 'evaluation', 'training']
     try:
-        # config = load_config_as_dict(path=config_path)
-        # _add_config_file_to_mlflow(config)
-        mlflow.log_artifact(str(config_path))
+        config = load_config_as_dict(path=config_path)
+        _add_config_file_to_mlflow(config)
+        # mlflow.log_artifact(str(config_path))
     except Exception as e:
         print(f'exception when logging config file to mlflow: {e}')
     try:
