@@ -21,7 +21,6 @@ class Trainer(TrainerBase):
         self.activation = self.config.general_info.activation
         self.loss = self.config.info_training.loss
         self.epochs = self.config.info_training.epochs
-        self.three_phase_training = self.config.general_info.three_phase_training
         self.class_names = self.config.general_info.classes
 
         self.checkpoints_dir = self.run_dir.joinpath('checkpoints')

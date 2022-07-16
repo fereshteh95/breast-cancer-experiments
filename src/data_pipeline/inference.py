@@ -51,7 +51,6 @@ class DataLoader(DataLoaderBase):
         self.train_batch_size = self.config.general_info.train_batch_size
         self.valid_batch_size = self.config.general_info.val_batch_size
         self.test_batch_size = self.config.general_info.test_batch_size
-        self.patch_training = self.config.general_info.patch_training
 
     def create_training_generator(self) -> typing.Tuple[typing.Iterator, int]:
 
