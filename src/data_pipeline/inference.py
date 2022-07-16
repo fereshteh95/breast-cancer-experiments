@@ -123,9 +123,11 @@ class DataLoader(DataLoaderBase):
         """
         class_weights = {}
 
-        for i in range(len(self.class_names)):
-            class_weights[i] = 1 - len(self.train_df.loc[self.train_df[self.class_names[i]] == 1]) / len(self.train_df)
-
+        if len(self.class_names) > 1:
+            for i in range(len(self.class_names)):
+                class_weights[i] = 1 - len(self.train_df.loc[self.train_df[self.class_names[i]] == 1]) / len(self.train_df)
+        else:
+            class_weights[0] = 1 - len(self.train_df.loc[self.train_df[self.class_names[0]] == 1]) / len(self.train_df)
         return class_weights
 
     def create_validation_generator(self):

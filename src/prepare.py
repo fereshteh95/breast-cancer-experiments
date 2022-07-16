@@ -38,13 +38,22 @@ class Preparation:
 
     @staticmethod
     def metrics_define(num_classes):
-        metrics = ['accuracy',
-                   tf.keras.metrics.SensitivityAtSpecificity(0.8),
-                   tf.keras.metrics.AUC(curve='PR', name='auc_pr'),
-                   tf.keras.metrics.AUC(name='auc_roc'),
-                   tf.keras.metrics.FalseNegatives(),
-                   tf.keras.metrics.FalsePositives(),
-                   tf.keras.metrics.TrueNegatives(),
-                   tf.keras.metrics.TruePositives()]
+        if num_classes == 1:
+            metrics = ['accuracy',
+                       tf.keras.metrics.SensitivityAtSpecificity(0.8),
+                       tf.keras.metrics.AUC(curve='PR', name='auc_pr'),
+                       tf.keras.metrics.FalseNegatives(),
+                       tf.keras.metrics.FalsePositives(),
+                       tf.keras.metrics.TrueNegatives(),
+                       tf.keras.metrics.TruePositives()]
+        else:
+            metrics = ['accuracy',
+                       tf.keras.metrics.SensitivityAtSpecificity(0.8),
+                       tf.keras.metrics.AUC(curve='PR', name='auc_pr'),
+                       tf.keras.metrics.AUC(name='auc_roc'),
+                       tf.keras.metrics.FalseNegatives(),
+                       tf.keras.metrics.FalsePositives(),
+                       tf.keras.metrics.TrueNegatives(),
+                       tf.keras.metrics.TruePositives()]
 
         return metrics

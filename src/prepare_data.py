@@ -60,6 +60,11 @@ def main(test_size: float):
     columns = ['imgfile']
     columns.extend(class_names)
 
+    if len(class_names) == 1:
+        label_columns = class_names[0]
+    else:
+        label_columns = columns[1:]
+
     x_names = []
     labels = []
     for i in range(len(x_train)):
@@ -73,7 +78,7 @@ def main(test_size: float):
 
     train_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
     train_df['imgfile'] = x_names
-    train_df[columns[1:]] = labels
+    train_df[label_columns] = labels
 
     x_names = []
     labels = []
@@ -88,7 +93,7 @@ def main(test_size: float):
 
     val_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
     val_df['imgfile'] = x_names
-    val_df[columns[1:]] = labels
+    val_df[label_columns] = labels
 
     df_1 = pd.read_csv(path_to_labels_1)
     df_2 = pd.read_csv(path_to_labels_2)
@@ -117,7 +122,7 @@ def main(test_size: float):
 
     test_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
     test_df['imgfile'] = x_names
-    test_df[columns[1:]] = labels
+    test_df[label_columns] = labels
 
     train_df.to_csv(train_csv_file, index=False)
     val_df.to_csv(validation_csv_file, index=False)

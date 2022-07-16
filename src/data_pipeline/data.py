@@ -58,7 +58,10 @@ class ImageSequenceMultiView(Sequence):
         self.verbose = verbose
         self.shuffle = shuffle_on_epoch_end
         self.random_state = random_state
-        self.class_names = class_names
+        if len(class_names) == 1:
+            self.class_names = class_names[0]
+        else:
+            self.class_names = class_names
         self.cc_names = cc_names
         self.mlo_names = mlo_names
         self.cc_path = None
@@ -228,7 +231,10 @@ class ImageSequenceSingleView(Sequence):
         self.verbose = verbose
         self.shuffle = shuffle_on_epoch_end
         self.random_state = random_state
-        self.class_names = class_names
+        if len(class_names) == 1:
+            self.class_names = class_names[0]
+        else:
+            self.class_names = class_names
         self.x_names = x_names
         self.x_path = None
         self.y = None
