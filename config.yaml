@@ -1,6 +1,6 @@
 general_info:
   multi_view: False
-  classes : ['Benign', 'Malignant']
+  classes : ['calcification', 'mass']
   random_seed : 2
   image_source_dir_train : '../data/'
   image_source_dir_val : '../data/'
