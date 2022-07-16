@@ -42,10 +42,8 @@ class DataLoader(DataLoaderBase):
         self.x_names = self.config.data_sequence.x_names
         self.cc_names = self.config.data_sequence.cc_names
         self.mlo_names = self.config.data_sequence.mlo_names
-        self.target_size_h_whole = self.config.data_sequence.image_height_whole
-        self.target_size_w_whole = self.config.data_sequence.image_width_whole
-        self.target_size_h_patch = self.config.data_sequence.image_height_patch
-        self.target_size_w_patch = self.config.data_sequence.image_width_patch
+        self.target_size_h = self.config.data_sequence.image_height
+        self.target_size_w = self.config.data_sequence.image_width
         self.synthesize = self.config.data_sequence.synthesize
         self.shuffle_on_epoch_end = self.config.data_sequence.shuffle_on_epoch_end
         self.augmenter = self.config.data_sequence.augmenter
@@ -78,12 +76,8 @@ class DataLoader(DataLoaderBase):
         else:
             augmentation = None
 
-        if self.patch_training:
-            img_h = self.target_size_h_patch
-            img_w = self.target_size_w_patch
-        else:
-            img_h = self.target_size_h_whole
-            img_w = self.target_size_w_whole
+        img_h = self.target_size_h
+        img_w = self.target_size_w
 
         if self.multi_view:
             train_sequence = ImageSequenceMultiView(self.train_df,
@@ -157,12 +151,8 @@ class DataLoader(DataLoaderBase):
 
         augmentation = None
 
-        if self.patch_training:
-            img_h = self.target_size_h_patch
-            img_w = self.target_size_w_patch
-        else:
-            img_h = self.target_size_h_whole
-            img_w = self.target_size_w_whole
+        img_h = self.target_size_h
+        img_w = self.target_size_w
 
         if self.multi_view:
             val_sequence = ImageSequenceMultiView(self.validation_df,
@@ -219,12 +209,8 @@ class DataLoader(DataLoaderBase):
 
         augmentation = None
 
-        if self.patch_training:
-            img_h = self.target_size_h_patch
-            img_w = self.target_size_w_patch
-        else:
-            img_h = self.target_size_h_whole
-            img_w = self.target_size_w_whole
+        img_h = self.target_size_h
+        img_w = self.target_size_w
 
         if self.multi_view:
             test_sequence = ImageSequenceMultiView(self.test_df,
@@ -237,7 +223,7 @@ class DataLoader(DataLoaderBase):
                                                    img_w,
                                                    self.synthesize,
                                                    augmentation,
-                                                   self.verbose,
+                                                   True,
                                                    test_steps,
                                                    False,
                                                    self.random_seed
@@ -252,7 +238,7 @@ class DataLoader(DataLoaderBase):
                                                     img_w,
                                                     self.synthesize,
                                                     augmentation,
-                                                    self.verbose,
+                                                    True,
                                                     test_steps,
                                                     False,
                                                     self.random_seed

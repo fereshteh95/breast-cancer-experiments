@@ -16,3 +16,5 @@ keras-tuner==v1.1.2
 omegaconf==2.1
 opencv-python==4.5.5.64
 albumentations
+seaborn
+prettytable

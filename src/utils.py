@@ -5,12 +5,11 @@ import mlflow
 from mlflow.entities import ViewType
 from git import Repo
 
-
 MLFLOW_TRACKING_URI = "http://185.110.190.127:7080/"
 
 
 def setup_mlflow_active_run(config_path: Path,
-                            is_evaluation: bool):
+                            session_type: str):
     """setup the MLFlow"""
 
     try:
@@ -19,15 +18,12 @@ def setup_mlflow_active_run(config_path: Path,
         experiment_name = root + '/' + repo.active_branch.name
     except:
         print('Not a Git Repository')
-        experiment_name = 'brast-cancer-experiments/patch-classifier'
+        experiment_name = 'breast-cancer-experiments/patch-classifier'
 
     mlflow.end_run()
     active_run = _setup_mlflow(mlflow_experiment_name=experiment_name)
 
-    if is_evaluation:
-        sess_type = 'evaluation'
-    else:
-        sess_type = 'training'
+    sess_type = session_type
 
     mlflow.set_tag("session_type", sess_type)  # ['hpo', 'evaluation', 'training']
     try:
@@ -82,16 +78,10 @@ def _setup_mlflow(mlflow_experiment_name: str,
     print(f'Exp Artifact Location: {experiment.artifact_location}')
     print(f'Exp Tags: {experiment.tags}')
     print(f'Exp Lifecycle Stage: {experiment.lifecycle_stage}')
-    # if experiment is not None:
-    #     experiment_id = experiment.experiment_id
-    # else:
-    #     experiment_id = mlflow.create_experiment(mlflow_experiment_name)
 
     mlflow.set_tracking_uri(mlflow_tracking_uri)
-    active_run = mlflow.start_run(experiment_id=experiment.experiment_id)
-    # active_run = mlflow.start_run(experiment_id=experiment.experiment_id)
 
-    return active_run
+    return mlflow.start_run(experiment_id=experiment.experiment_id)
 
 
 def _add_config_file_to_mlflow(config_dict: dict):

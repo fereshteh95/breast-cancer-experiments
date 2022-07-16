@@ -235,7 +235,7 @@ class ImageSequenceSingleView(Sequence):
         self.prepare_dataset()
 
         if steps is None:
-            self.steps = int(np.ceil(len(self.cc_path) / float(self.batch_size)))
+            self.steps = int(np.ceil(len(self.x_path) / float(self.batch_size)))
         else:
             self.steps = int(steps)
 
@@ -313,7 +313,7 @@ class ImageSequenceSingleView(Sequence):
             raise ValueError("""
             You're trying run get_y_true() when generator option 'shuffle_on_epoch_end' is True.
             """)
-        return self.y[:self.steps * self.batch_size, :]
+        return self.y
 
     def get_x_true(self):
         """
@@ -325,7 +325,7 @@ class ImageSequenceSingleView(Sequence):
             raise ValueError("""
             You're trying run get_y_true() when generator option 'shuffle_on_epoch_end' is True.
             """)
-        return self.x_path[:self.steps * self.batch_size]
+        return self.x_path
 
     def prepare_dataset(self):
         df = self.dataset_df.sample(frac=1., random_state=self.random_state)

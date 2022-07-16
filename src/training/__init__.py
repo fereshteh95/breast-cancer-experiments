@@ -1,2 +1,2 @@
-from .trainer import Trainer
+from .trainer import Trainer, Exporter
 from .base import TrainerBase

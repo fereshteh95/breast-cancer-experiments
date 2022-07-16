@@ -10,96 +10,117 @@ from omegaconf import OmegaConf
 
 
 @click.command()
-@click.argument('path_to_data', type=str, default='')
-@click.argument('path_to_labels', type=str, default='')
 @click.argument('test_size', type=float, default=0.3)
-def main(path_to_data: str, path_to_labels: str, test_size: float):
+def main(test_size: float):
     config_file_path = Path('../config.yaml')
     config = OmegaConf.load(config_file_path)
 
     random_seed = config.general_info.random_seed
     class_names = config.general_info.classes
-    data_dir = '../data/'+path_to_data.split('/')[-1].split('.')[0]
+    view = config.data.view
+    path_to_data_1 = config.data.path_to_data_1
+    path_to_data_2 = config.data.path_to_data_2
+    path_to_labels_1 = config.data.path_to_labels_1
+    path_to_labels_2 = config.data.path_to_labels_2
+
+    data_dir_1 = '../data/' + path_to_data_1.split('/')[-1].split('.')[0]
+    data_dir_2 = '../data/' + path_to_data_2.split('/')[-1].split('.')[0]
     train_csv_file = config.data_sequence.train_csv_file
     validation_csv_file = config.data_sequence.validation_csv_file
+    test_csv_file = config.data_sequence.test_csv_file
 
-    shutil.unpack_archive(path_to_data, data_dir)
+    shutil.unpack_archive(path_to_data_1, data_dir_1)
+    shutil.unpack_archive(path_to_data_2, data_dir_2)
 
     label_dict = {
-        'background': [1, 0, 0, 0, 0],
-        'Benign calcification': [0, 1, 0, 0, 0],
-        'Malignant calcification': [0, 0, 1, 0, 0],
-        'Benign mass': [0, 0, 0, 1, 0],
-        'Malignant mass': [0, 0, 0, 0, 1]
+        'Benign': [1, 0],
+        'Malignant': [0, 1],
+        # 'Benign mass': [0, 0, 1, 0],
+        # 'Malignant mass': [0, 0, 0, 1]
     }
-    df = pd.read_csv(path_to_labels)
+    df_1 = pd.read_csv(path_to_labels_1)
+    df_2 = pd.read_csv(path_to_labels_2)
+    df = df_1.append(df_2, ignore_index=True)
+    # df = df.loc[df['Type'] != 'both']
     df = df.loc[df['Training_Tag'] == 'Train'].reset_index()
 
+    label = []
+
+    for i in range(len(df)):
+        label.append(label_dict[df['Pathology'].values[i]])
+
+    df[class_names] = label
+
     x = list(df.index)
-    y = df['Label'].values
+    y = df[class_names].values
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_seed)
 
     columns = ['imgfile']
     columns.extend(class_names)
 
-    train_imgs = []
-    train_labels = []
+    x_names = []
+    labels = []
     for i in range(len(x_train)):
         df_i = df.iloc[x_train[i]]
 
-        abn = ast.literal_eval(df_i['PatchFolder_abn'])
-        img = []
-        for j in range(len(abn)):
-            img.extend(glob.glob('../data/' + abn[j] + '*.jpg'))
-        label = [label_dict[df_i['Label']] for _ in range(len(img))]
-        train_imgs.extend(img)
-        train_labels.extend(label)
+        x = df_i[view]
+        y = df_i[class_names]
 
-        bck = ast.literal_eval(df_i['PatchFolder_bck'])
-        img = []
-        for j in range(len(bck)):
-            img.extend(glob.glob('../data/' + bck[j] + '*.jpg'))
-        label = [label_dict['background'] for _ in range(len(img))]
+        x_names.append(x)
+        labels.append(y)
 
-        train_imgs.extend(img)
-        train_labels.extend(label)
+    train_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
+    train_df['imgfile'] = x_names
+    train_df[columns[1:]] = labels
 
-    train_df = pd.DataFrame(index=np.arange(len(train_imgs)), columns=columns)
-    train_df['imgfile'] = train_imgs
-    train_df[columns[1:]] = train_labels
-
-    val_imgs = []
-    val_labels = []
+    x_names = []
+    labels = []
     for i in range(len(x_test)):
         df_i = df.iloc[x_test[i]]
 
-        abn = ast.literal_eval(df_i['PatchFolder_abn'])
-        img = []
-        for j in range(len(abn)):
-            img.extend(glob.glob('../data/' + abn[j] + '*.jpg'))
-        label = [label_dict[df_i['Label']] for _ in range(len(img))]
-        val_imgs.extend(img)
-        val_labels.extend(label)
+        x = df_i[view]
+        y = df_i[class_names]
 
-        bck = ast.literal_eval(df_i['PatchFolder_bck'])
-        img = []
-        for j in range(len(bck)):
-            img.extend(glob.glob('../data/' + bck[j] + '*.jpg'))
-        label = [label_dict['background'] for _ in range(len(img))]
+        x_names.append(x)
+        labels.append(y)
 
-        val_imgs.extend(img)
-        val_labels.extend(label)
+    val_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
+    val_df['imgfile'] = x_names
+    val_df[columns[1:]] = labels
 
-    val_df = pd.DataFrame(index=np.arange(len(val_imgs)), columns=columns)
-    val_df['imgfile'] = val_imgs
-    val_df[columns[1:]] = val_labels
+    df_1 = pd.read_csv(path_to_labels_1)
+    df_2 = pd.read_csv(path_to_labels_2)
+    df = df_1.append(df_2, ignore_index=True)
+    # df = df.loc[df['Type'] != 'both']
+    df = df.loc[df['Training_Tag'] == 'Evaluation'].reset_index()
+
+    label = []
+
+    for i in range(len(df)):
+        label.append(label_dict[df['Pathology'].values[i]])
+
+    df[class_names] = label
+
+    x_names = []
+    labels = []
+    for i in range(len(df)):
+        df_i = df.iloc[i]
+
+        x = df_i[view]
+        y = df_i[class_names]
+
+        x_names.append(x)
+        labels.append(y)
+
+    test_df = pd.DataFrame(index=np.arange(len(x_names)), columns=columns)
+    test_df['imgfile'] = x_names
+    test_df[columns[1:]] = labels
 
     train_df.to_csv(train_csv_file, index=False)
     val_df.to_csv(validation_csv_file, index=False)
+    test_df.to_csv(test_csv_file, index=False)
 
 
 if __name__ == '__main__':
     main()
-
-

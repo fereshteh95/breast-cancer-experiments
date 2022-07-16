@@ -58,9 +58,9 @@ class TrainerBase(ABC):
               active_run: typing.Optional[mlflow.ActiveRun] = None):
         """Training the model."""
 
-    @abstractmethod
-    def export(self):
-        """
-         Exports the best model to `self.exported_dir`, logs the model to mlflow's model registry,
-         and adds the model's address to the config file to be versioned using git.
-        """
+    # @abstractmethod
+    # def export(self):
+    #     """
+    #      Exports the best model to `self.exported_dir`, logs the model to mlflow's model registry,
+    #      and adds the model's address to the config file to be versioned using git.
+    #     """
