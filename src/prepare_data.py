@@ -33,8 +33,8 @@ def main(test_size: float):
     shutil.unpack_archive(path_to_data_2, data_dir_2)
 
     label_dict = {
-        'Benign': 0,
-        'Malignant': 1,
+        'Benign': [1, 0],
+        'Malignant': [0, 1],
         # 'Benign mass': [0, 0, 1, 0],
         # 'Malignant mass': [0, 0, 0, 1]
     }
