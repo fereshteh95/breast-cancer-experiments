@@ -33,15 +33,16 @@ def main(test_size: float):
     shutil.unpack_archive(path_to_data_2, data_dir_2)
 
     label_dict = {
-        'calcification': [1, 0],
-        'mass': [0, 1],
+        'Benign': 0,
+        'Malignant': 1,
         # 'Benign mass': [0, 0, 1, 0],
         # 'Malignant mass': [0, 0, 0, 1]
     }
     df_1 = pd.read_csv(path_to_labels_1)
     df_2 = pd.read_csv(path_to_labels_2)
     df = df_1.append(df_2, ignore_index=True)
-    df = df.loc[df['Type'] != 'both']
+    # df = df.loc[df['Type'] != 'both']
+    df = df.loc[(df['Type'] == 'mass') | (df['Type'] == 'both')]
     df = df.loc[df['Training_Tag'] == 'Train'].reset_index()
 
     label = []
@@ -92,7 +93,8 @@ def main(test_size: float):
     df_1 = pd.read_csv(path_to_labels_1)
     df_2 = pd.read_csv(path_to_labels_2)
     df = df_1.append(df_2, ignore_index=True)
-    df = df.loc[df['Type'] != 'both']
+    # df = df.loc[df['Type'] != 'both']
+    df = df.loc[(df['Type'] == 'mass') | (df['Type'] == 'both')]
     df = df.loc[df['Training_Tag'] == 'Evaluation'].reset_index()
 
     label = []
