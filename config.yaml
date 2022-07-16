@@ -16,8 +16,8 @@ general_info:
   base_model_name: 'densenet121'
 
 info_training:
-  run : '/content/drive/MyDrive/BR-Runs/image/benign-malignant/Run1/run'
-  export: '/content/drive/MyDrive/BR-Runs/image/benign-malignant/Run1/export'
+  run : '/content/drive/MyDrive/BR-Runs/image/mass-calc/Run1/run'
+  export: '/content/drive/MyDrive/BR-Runs/image/mass-calc/Run1/export'
   epochs : 20
   initial_learning_rate: 1e-4
   loss : 'categorical_crossentropy'
